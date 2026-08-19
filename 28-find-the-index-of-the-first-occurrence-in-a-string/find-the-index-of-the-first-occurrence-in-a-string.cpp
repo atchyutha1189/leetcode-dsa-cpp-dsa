@@ -2,21 +2,60 @@ class Solution {
 public:
     int strStr(string haystack, string needle) {
 
-        for (int i = 0; i < haystack.size(); i++) {
+        int n = haystack.size();
+        int m = needle.size();
 
-            int j = 0;
+        if (m == 0)
+            return 0;
 
-            for (int k = i; k < haystack.size(); k++) {
+        // Step 1: Create LPS array
+        vector<int> lps(m, 0);
 
-                if (haystack[k] == needle[j]) {
-                    j++;
+        int i = 1;
+        int len = 0;
+
+        while (i < m) {
+
+            if (needle[i] == needle[len]) {
+                len++;
+                lps[i] = len;
+                i++;
+            }
+
+            else {
+                if (len != 0) {
+                    len = lps[len - 1];
                 }
+
                 else {
-                    break;
+                    lps[i] = 0;
+                    i++;
+                }
+            }
+        }
+
+        // Step 2: KMP search
+        i = 0;
+        int j = 0;
+
+        while (i < n) {
+
+            if (haystack[i] == needle[j]) {
+                i++;
+                j++;
+
+                if (j == m) {
+                    return i - j;
+                }
+            }
+
+            else {
+                if (j != 0) {
+                    j = lps[j - 1];
                 }
 
-                if (j == needle.size()) {
-                    return i;
+                else {
+                    i++;
                 }
             }
         }
